@@ -4,6 +4,7 @@ import streamlit as st
 import json
 import requests
 import pandas as pd
+import pycountry as pc
 
 
 def main():
@@ -29,11 +30,32 @@ def main():
         color = get_color(rank)
         cur_handle = user_info["handle"]
 
+        # current rank and handle
         st.markdown(
             f'<h3 style="color:{color}; padding-bottom: 0px">{rank.title()}</h3> <h2 style="color:{color}; padding-top: 0px">{cur_handle}</h2>', unsafe_allow_html=True)
-        st.write("**Country:**", user_info["country"])
-        st.write("**Rating:**", user_info["rating"])
+
+        # flag image and country
+        country = "Viet Nam" if user_info["country"] == "Vietnam" else user_info["country"]
+        country_code = get_country_code(country).lower()
+        image_url = f'https://codeforces.org/s/33207/images/flags-16/{country_code}.png'
+        st.markdown(
+            f'<p><img src="{image_url}"> <strong>{country}</strong> </p>',
+            unsafe_allow_html=True
+        )
+
+        # rating
+        st.markdown(
+            f'<p><strong>Rating:</strong> <strong style="color:{color}">{str(user_info["rating"])}</strong></p>',
+            unsafe_allow_html=True
+        )
+
+        # max rating
+        maxRating_color = get_color(user_info["maxRank"])
+        st.markdown(
+            f'<p> <strong>Max Rating: </strong><strong style="color:{maxRating_color}">{str(user_info["maxRating"])}, </strong> <strong style="color:{maxRating_color}">{user_info["maxRank"].title()}</strong>', unsafe_allow_html=True
+        )
     else:
+        # write the error
         st.write("**Error:**", response["comment"])
 
     # request data to render the chart
@@ -105,6 +127,14 @@ def get_color(rank):
     if rank == "pupil":
         return "green"
     return "grey"
+
+
+def get_country_code(country_name):
+    try:
+        country = pc.countries.get(name=country_name)
+        return country.alpha_2
+    except AttributeError:
+        return None
 
 
 if __name__ == '__main__':
