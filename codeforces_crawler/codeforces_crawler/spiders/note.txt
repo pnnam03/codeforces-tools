@@ -1,0 +1,10 @@
+Create a spider:
+    scrapy genspider codeforces_spider codeforces.com
+Run the spider 'codeforces_spider'and output the data in 'codeforces_data.json':
+    scrapy crawl codeforces_spider -o codeforces_data.json
+Activate enviroment:
+    myenv\Scripts\activate
+Deactivate enviroment:
+    deactivate
+Open Scrapy Shell:
+    scrapy shell
