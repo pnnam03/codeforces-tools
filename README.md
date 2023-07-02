@@ -1,1 +1,1 @@
-"# Codeforces-User-Info" 
+# Codeforces-User-Info
