@@ -1,0 +1,14 @@
+setup.py
+codeforces_crawler/__init__.py
+codeforces_crawler/items.py
+codeforces_crawler/middlewares.py
+codeforces_crawler/pipelines.py
+codeforces_crawler/settings.py
+codeforces_crawler/spiders/__init__.py
+codeforces_crawler/spiders/codeforces_spider.py
+codeforces_crawler/spiders/problem_spider.py
+project.egg-info/PKG-INFO
+project.egg-info/SOURCES.txt
+project.egg-info/dependency_links.txt
+project.egg-info/entry_points.txt
+project.egg-info/top_level.txt

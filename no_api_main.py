@@ -7,26 +7,36 @@ import pandas as pd
 import pycountry as pc
 
 
+def update_dropdown_menu():
+    return
+
+
 def main():
-    # get handles from JSON file
-    with open('codeforces_crawler//codeforces_crawler//spiders//codeforces_data.json') as f:
-        data = json.load(f)
-    user_handles = [item['handle'] for item in data]
+
+    data = []
+    handle_tuples = []
+    handles = []
+    default_index = 0
+    with open('codeforces_crawler\\codeforces_crawler\\spiders\\cf_user_data.jl') as file:
+        for i, line in enumerate(file):
+            json_obj = json.loads(line)
+            data.append(json_obj)
+            handle_tuples.append((json_obj['handle'], i))
+            if json_obj['handle'] in 'y0urs3lf':
+                default_index = i
+    handles = [t[0] for t in handle_tuples]
 
     st.write("# Codeforces User's Profile")
 
     # the index argument is to parse the default value to the selectbox
-    default_index = user_handles.index("y0urs3lf")
-    handle = st.selectbox("Select a handle", user_handles, index=default_index)
-
-    # request the response from codeforces
-    url = f"https://codeforces.com/api/user.info?handles={handle}"
-    response = requests.get(url).json()
+    handle = st.selectbox("Select a handle", handles,
+                          index=default_index, on_change=update_dropdown_menu())
+    index = handle_tuples[handles.index(handle)][1]
 
     # Extract and display the response
-    if response["status"] == "OK":
-        user_info = response["result"][0]
-        rank = user_info["rank"]
+    if True:
+        user_info = data[index]
+        rank = user_info['rank'][0:len(user_info['rank'])-1]
         color = get_color(rank)
         cur_handle = user_info["handle"]
 
@@ -36,12 +46,18 @@ def main():
 
         # flag image and country
         country = "Viet Nam" if user_info["country"] == "Vietnam" else user_info["country"]
-        country_code = get_country_code(country).lower()
-        image_url = f'https://codeforces.org/s/33207/images/flags-16/{country_code}.png'
-        st.markdown(
-            f'<p><img src="{image_url}"> <strong>{country}</strong> </p>',
-            unsafe_allow_html=True
-        )
+        if country != "":
+            country_code = get_country_code(country).lower()
+            image_url = f'https://codeforces.org/s/33207/images/flags-16/{country_code}.png'
+            st.markdown(
+                f'<p><img src="{image_url}"> <strong>{country}</strong> </p>',
+                unsafe_allow_html=True
+            )
+        else:
+            st.markdown(
+                f'<p><strong>{country}</strong> </p>',
+                unsafe_allow_html=True
+            )
 
         # rating
         st.markdown(
@@ -50,15 +66,15 @@ def main():
         )
 
         # max rating
-        maxRating_color = get_color(user_info["maxRank"])
+        max_rating_color = get_color(user_info["max_rank"])
         st.markdown(
-            f'<p> <strong>Max Rating: </strong><strong style="color:{maxRating_color}">{str(user_info["maxRating"])}, </strong> <strong style="color:{maxRating_color}">{user_info["maxRank"].title()}</strong>', unsafe_allow_html=True
+            f'<p> <strong>Max Rating: </strong><strong style="color:{max_rating_color}">{str(user_info["max_rating"])}, </strong> <strong style="color:{max_rating_color}">{user_info["max_rank"].title()}</strong>', unsafe_allow_html=True
         )
     else:
-        # write the error
-        st.write("**Error:**", response["comment"])
+        pass
 
     # request data to render the chart
+    # return
     url = f"https://codeforces.com/api/user.rating?handle={handle}"
     response = requests.get(url).json()
 
