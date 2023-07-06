@@ -2,205 +2,63 @@ import altair as alt
 import datetime
 import streamlit as st
 import json
-import requests
-import pandas as pd
-import pycountry as pc
 
 
-def update_state():
-    # ì
-    st.session_state['check'] = False
-
-
-def find_best_matches(strs, s):
-    l = len(s)
-    results = []
-    for i in range(l, -1, -1):
-        for j in range(0, l-i+1):
-            tmp_s = s[j:j+i]
-            chk = False
-            for x in strs:
-                if tmp_s.lower() in x.lower() and x not in results:
-                    results.append(x)
-                    if len(results) == 7:
-                        return results
-    return results
+titles = []
+time_limits = []
+memory_limits = []
+input_files = []
+output_files = []
+problem_statements = []
+input_specifications = []
+output_specifications = []
+sample_test_input = []
+sample_test_output = []
+note = []
 
 
 def main():
+    read_data()
+    for i in range(1):
+        st.write("**Title:**", titles[i][0])
+        st.write(time_limits[i][0], ":", time_limits[i][1])
+        st.write(memory_limits[i][0], ":", memory_limits[i][1])
+        st.write(input_files[i][0], ":", input_files[i][1])
+        st.write(output_files[i][0], ":", output_files[i][1])
 
-    data = []
-    handle_tuples = []
-    handles = []
-    default_index = 0
-    with open('codeforces_crawler\codeforces_crawler\spiders\items_codeforces_spider_2.jl') as file:
+        st.write("**Problem:**")
+        for p in problem_statements[i]:
+            new_p = "".join(p)
+            st.markdown(new_p)
+
+        st.write("**Input:**")
+        for p in input_specifications[i]:
+            new_p = "".join(p)
+            st.markdown(new_p)
+
+        st.write("**Output:**")
+        for p in output_specifications[i]:
+            new_p = "".join(p)
+            st.markdown(new_p)
+
+        st.divider()
+
+
+def read_data():
+    with open('codeforces_crawler\codeforces_crawler\spiders\problem_data.jl', encoding='utf-8') as file:
         for i, line in enumerate(file):
             json_obj = json.loads(line)
-            data.append(json_obj)
-            handle_tuples.append((json_obj['handle'], i))
-            if json_obj['handle'] in 'y0urs3lf':
-                default_index = i
-    handles = [t[0] for t in handle_tuples]
-
-    st.write("# Codeforces User's Profile")
-
-    query = st.text_input(
-        "label", placeholder="Enter a handle you want to find. For example: y0urs3lf", label_visibility='hidden', on_change=update_state)
-
-    selected_handle = ""
-
-    # and ((not 'check' in st.session_state) or st.session_state['check'] == False):
-    button_frames = []
-    if query != "":
-        # Call the search function and display the results
-        results = find_best_matches(handles, query)
-        if len(results) == 0:
-            st.write("No results found")
-        else:
-            st.write(f'Best results for **{query}**:')
-            # (not 'check' in st.session_state) or st.session_state['check'] == False:
-            if True:
-                for result in results:
-                    # Display the result as a clickable link
-                    button_frame = st.empty()
-                    isClicked = button_frame.button(
-                        result, use_container_width=True, key=result)
-                    button_frames.append((button_frame, result))
-                    if isClicked:
-                        # Change the context of the page based on the selected result
-                        # result_frame.empty()
-                        selected_handle = result
-                        # st.session_state['check'] = True
-                        break
-
-    if selected_handle != "":
-        for (frame, handle) in button_frames:
-            if handle != selected_handle:
-                frame.empty()
-
-        index = handles.index(selected_handle)
-
-        user_info = data[index]
-        rank = user_info['rank'][0:len(user_info['rank'])-1]
-        color = get_color(rank)
-        cur_handle = user_info["handle"]
-
-        st.markdown(
-            f'<h3 style="color:{color}; padding-bottom: 0px">{rank.title()}</h3> <h2 style="color:{color}; padding-top: 0px">{cur_handle}</h2>', unsafe_allow_html=True)
-
-        # flag image and country
-        country = user_info["country"]
-        if country != "":
-            country_code = get_country_code(country).lower()
-            image_url = f'https://codeforces.org/s/33207/images/flags-16/{country_code}.png'
-            st.markdown(
-                f'<p><img src="{image_url}"> <strong>{country}</strong> </p>',
-                unsafe_allow_html=True
-            )
-        else:
-            st.markdown(
-                f'<p><strong>{country}</strong> </p>',
-                unsafe_allow_html=True
-            )
-
-        # rating
-        st.markdown(
-            f'<p><strong>Rating:</strong> <strong style="color:{color}">{str(user_info["rating"])}</strong></p>',
-            unsafe_allow_html=True
-        )
-
-        # max rating
-        max_rating_color = get_color(user_info["max_rank"])
-        st.markdown(
-            f'<p> <strong>Max Rating: </strong><strong style="color:{max_rating_color}">{str(user_info["max_rating"])}, </strong> <strong style="color:{max_rating_color}">{user_info["max_rank"].title()}</strong>', unsafe_allow_html=True
-        )
-
-    # request data to render the chart
-    # return
-        url = f"https://codeforces.com/api/user.rating?handle={selected_handle}"
-        response = requests.get(url).json()
-
-        if response["status"] == "OK":
-            data = response["result"]
-
-            contestName, rating, time, rank = [], [], [], []
-            for x in data:
-                contestName.append(x.get("contestName"))
-                rating.append(x.get("newRating"))
-
-                # convert time from unix-format -> date
-                timestamp = x.get("ratingUpdateTimeSeconds")
-                dt_object = datetime.datetime.fromtimestamp(timestamp)
-                formatted_date = dt_object.strftime('%Y-%m-%d')
-                time.append(formatted_date)
-
-                rank.append(x.get("rank"))
-
-            chart_data = pd.DataFrame(
-                {
-                    'contestName': contestName,
-                    'rating': rating,
-                    'time': time,
-                    'rank': rank,
-                })
-
-            # altair support rendering chart with limit value in the axis
-            y_min = max(0, min(chart_data["rating"]) - 100)
-            y_max = max(chart_data["rating"]) + 100
-
-            scale = alt.Scale(domain=(y_min, y_max))
-
-            chart = alt.Chart(chart_data).mark_line(
-                point=alt.OverlayMarkDef(
-                    size=50, filled=False, color="#4A55A2", fill="#A0BFE0"),  # properties of the point
-                color="#A0BFE0"  # color of the line
-            ).encode(
-                x='time:T',  # the :T is added to display x-axis as Time, not String => more interactive
-                # the alt.y is added to show the points in certain range
-                y=alt.Y('rating', scale=scale),
-                tooltip=['contestName', 'rank'],
-            ).interactive()
-
-            # Render the chart using Streamlit
-            st.altair_chart(chart, use_container_width=True)
-        else:
-            st.write("**Error:**", response["comment"])
-    else:
-        pass
-
-
-def get_color(rank):
-    if rank == "legendary grandmaster":
-        return "red"
-    if rank == "international grandmaster":
-        return "red"
-    if rank == "grandmasterr":
-        return "red"
-    if rank == "international master":
-        return "orange"
-    if rank == "master":
-        return "orange"
-    if rank == "candidate master":
-        return "purple"
-    if rank == "expert":
-        return "blue"
-    if rank == "specialist":
-        return "cyan"
-    if rank == "pupil":
-        return "green"
-    return "grey"
-
-
-def get_country_code(country_name):
-    if country_name == "Vietnam":
-        return "Vn"
-    if country_name == "Taiwan":
-        return "Tw"
-    try:
-        country = pc.countries.get(name=country_name)
-        return country.alpha_2
-    except AttributeError:
-        return ""
+            titles.append(json_obj["title"])
+            time_limits.append(json_obj['time_limit'])
+            memory_limits.append(json_obj['memory_limit'])
+            input_files.append(json_obj['input_file'])
+            output_files.append(json_obj['output_file'])
+            problem_statements.append(json_obj['problem_statement'])
+            input_specifications.append(json_obj['input_specification'])
+            output_specifications.append(json_obj['output_specification'])
+            sample_test_input.append(json_obj['sample_test_input'])
+            sample_test_output.append(json_obj['sample_test_output'])
+            note.append(json_obj['note'])
 
 
 if __name__ == '__main__':

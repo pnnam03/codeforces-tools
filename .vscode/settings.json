@@ -2,6 +2,10 @@
   "[python]": {
     "editor.defaultFormatter": "ms-python.autopep8"
   },
+<<<<<<< HEAD
   "python.formatting.provider": "none",
   "cmake.configureOnOpen": false
+=======
+  "python.formatting.provider": "none"
+>>>>>>> 0a128ec5b7584c37dba2e8206e49faa0bccf7f69
 }
