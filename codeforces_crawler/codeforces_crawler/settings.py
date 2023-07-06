@@ -26,7 +26,7 @@ ROBOTSTXT_OBEY = False
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 0.25
+# DOWNLOAD_DELAY = 0.25
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
 # CONCURRENT_REQUESTS_PER_IP = 16
@@ -96,4 +96,4 @@ FEED_EXPORT_ENCODING = "utf-8"
 # This disable the debug mode
 # Can choose between three mode: DEBUG, INFO, WARNING
 # WARNING mode print out less infomation when crawling => run faster
-LOG_LEVEL = 'WARNING'
+LOG_LEVEL = 'DEBUG'
