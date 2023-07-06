@@ -9,7 +9,7 @@ import pycountry as pc
 
 def main():
     # get handles from JSON file
-    with open('codeforces_crawler//codeforces_crawler//spiders//codeforces_data.json') as f:
+    with open('codeforces_crawler\codeforces_crawler\spiders\cf_user_handle_vn.json') as f:
         data = json.load(f)
     user_handles = [item['handle'] for item in data]
 

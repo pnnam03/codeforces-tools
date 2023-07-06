@@ -7,17 +7,12 @@ import pandas as pd
 import pycountry as pc
 
 def find_best_matches(strs, s):
-    l = len(s)
     results = []
-    for i in range(l, -1, -1):
-        for j in range(0, l-i+1):
-            tmp_s = s[j:j+i]
-            chk = False
-            for x in strs:
-                if tmp_s.lower() in x.lower() and x not in results:
-                    results.append(x)
-                    if len(results) == 7:
-                        return results
+    for x in strs:
+        if s.lower() in x.lower():
+            results.append(x)
+            if len(results) == 7:
+                return results
     return results
 
 
@@ -27,7 +22,7 @@ def main():
     handle_tuples = []
     handles = []
     default_index = 0
-    with open('codeforces_crawler\codeforces_crawler\spiders\items_codeforces_spider_2.jl') as file:
+    with open('codeforces_crawler\codeforces_crawler\spiders\items_codeforces_spider_4.jl') as file:
         for i, line in enumerate(file):
             json_obj = json.loads(line)
             data.append(json_obj)

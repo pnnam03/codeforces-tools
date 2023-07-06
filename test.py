@@ -2,6 +2,7 @@ import altair as alt
 import datetime
 import streamlit as st
 import json
+import pandas as pd
 
 
 titles = []
@@ -19,7 +20,7 @@ note = []
 
 def main():
     read_data()
-    for i in range(1):
+    for i in range(5):
         st.write("**Title:**", titles[i][0])
         st.write(time_limits[i][0], ":", time_limits[i][1])
         st.write(memory_limits[i][0], ":", memory_limits[i][1])
@@ -41,7 +42,18 @@ def main():
             new_p = "".join(p)
             st.markdown(new_p)
 
+        st.write("**Examples**")
+        for i,(inp, out) in enumerate(zip(sample_test_input[i], sample_test_output[i])):
+            # print(p)
+            test = ["**input**", inp, "**output**", out]
+            df = pd.DataFrame({
+                f'Test {i}' : test
+            })
+
+            st.write(df.to_markdown(index=False), unsafe_allow_html=True)
+
         st.divider()
+
 
 
 def read_data():
