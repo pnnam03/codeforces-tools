@@ -143,7 +143,7 @@ def read_user_info():
 def get_color(rank):
     if rank == "international grandmaster":
         return "red"
-    if rank == "grandmasterr":
+    if rank == "grandmaster":
         return "red"
     if rank == "international master":
         return "orange"
@@ -185,14 +185,6 @@ def show_problemset_ui(tab):
     if selected_problem_id != -1:
         for (frame, i) in button_frames:
             frame.empty()
-        tab.write(
-            """
-                <script>
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                </script>
-                """,
-            unsafe_allow_html=True,
-        )
         isClicked = tab.button("Back to Problemset")
         show_problem(i, tab)
 
@@ -202,10 +194,10 @@ def show_problemset_ui(tab):
 
 def show_problem(i, tab):
     tab.markdown(f'<h1>{titles[i][0]}</h1>', unsafe_allow_html=True)
-    tab.write(f'{time_limits[i][0]}": "{time_limits[i][1]}')
-    tab.write(f'{memory_limits[i][0]}": "{memory_limits[i][1]}')
-    tab.write(f'{input_files[i][0]}": "{input_files[i][1]}')
-    tab.write(f'{output_files[i][0]}": "{output_files[i][1]}')
+    tab.write(f'{time_limits[i][0]}: {time_limits[i][1]}')
+    tab.write(f'{memory_limits[i][0]}: {memory_limits[i][1]}')
+    tab.write(f'{input_files[i][0]}: {input_files[i][1]}')
+    tab.write(f'{output_files[i][0]}: {output_files[i][1]}')
 
     tab.write("**Problem:**")
     for p in problem_statements[i]:
@@ -238,13 +230,14 @@ def show_problem(i, tab):
         tab.write('**output**')
         tab.text(out)
 
+    # tab.write
     tab.divider()
 
 
 def read_problemset():
     with open('codeforces_crawler\codeforces_crawler\spiders\problem_data.jl', encoding='utf-8') as file:
         for i, line in enumerate(file):
-            if i > 50:
+            if i > 50:  
                 break
             json_obj = json.loads(line)
 
