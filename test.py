@@ -134,7 +134,7 @@ def show_user_info_ui(tab):
 
 def read_user_info():
     # get handles from JSON file
-    with open('codeforces_crawler\codeforces_crawler\spiders\cf_user_handle_vn.json') as f:
+    with open('./codeforces_crawler/codeforces_crawler/spiders/cf_user_handle_vn.json') as f:
         data = json.load(f)
         for item in data:
             user_handles.append(item['handle'])
@@ -236,7 +236,7 @@ def show_problem(i, tab):
 
 
 def read_problemset():
-    with open('codeforces_crawler\codeforces_crawler\spiders\problem_data.jl', encoding='utf-8') as file:
+    with open('./codeforces_crawler/codeforces_crawler/spiders/problem_data.jl', encoding='utf-8') as file:
         for i, line in enumerate(file):
             if i > 50:  
                 break
