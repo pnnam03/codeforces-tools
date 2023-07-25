@@ -4,7 +4,7 @@ import streamlit as st
 import json
 import requests
 import pandas as pd
-import pycountry as pc
+# import pycountry as pc
 
 
 data = []
@@ -161,6 +161,7 @@ def get_color(rank):
 
 
 def get_country_code(country_name):
+    return 'vn'
     try:
         country = pc.countries.get(name=country_name)
         return country.alpha_2
